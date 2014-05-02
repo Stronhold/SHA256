@@ -23,33 +23,28 @@ void sha256(char* data, uint8_t length, uint32_t* digest)
 	for (i = 0; i < n_length / 64; i++)
 	{
 		uint32_t w[64];
-	//	for (int h = 0; h < 16; h++)
+	//	for (int m = 0; m < 16; m++)
 	//	{
-	//		w[h] = (message[h*4+i*64] << 24) + (message[h*4+i*64+1] << 16) + (message[h*4+i*64+2] << 8) + (message[h*4+i*64+2]);
+	//		w[m] = (message[m*4+i*64] << 24) + (message[m*4+i*64+1] << 16) + (message[m*4+i*64+2] << 8) + (message[m*4+i*64+2]);
 	//	}
 		memcpy(w, &message[i*64], 64);
 
-		printf("0x%x%x%x%x\n", message[0], message[1], message[2], message[3]);
-		printf("0x%x\n\n", w[0]);
-
-		for (i = 0; i < 16; i++) printf("0x%x\n", w[i]);
-
-		for (i = 16; i < 64; i++)
+		for (int n = 16; n < 64; n++)
 		{
 			uint32_t s0, s1;
 
-			s0 = rir(w[i-15], 7) ^ rir(w[i-15], 18) ^ (w[i-15] >> 3);
-			s1 = rir(w[i-2], 17) ^ rir(w[i-2], 19) ^ (w[i-2] >> 10);
-			w[i] = w[i-16] + s0 + w[i-7] + s1;
+			s0 = rir(w[n-15], 7) ^ rir(w[n-15], 18) ^ (w[n-15] >> 3);
+			s1 = rir(w[n-2], 17) ^ rir(w[n-2], 19) ^ (w[n-2] >> 10);
+			w[i] = w[n-16] + s0 + w[n-7] + s1;
 		}
 
 		uint32_t a = h0, b = h1, c = h2, d = h3, e = h4, f = h5, g = h6, h = h7;
 
-		for (i = 0; i < 64; i++)
+		for (int f = 0; f < 64; f++)
 		{
 			uint32_t S1 = rir(e, 6) ^ rir(e, 11) ^ rir(e, 25);
-			uint32_t ch = (e & f) ^ ((! e) & g);
-			uint32_t temp1 = h + S1 + ch + k[i] + w[i];
+			uint32_t ch = (e & f) ^ ((~ e) & g);
+			uint32_t temp1 = h + S1 + ch + k[f] + w[f];
 			uint32_t S0 = rir(a, 2) ^ rir(a, 13) ^ rir(a, 22);
 			uint32_t maj = (a & b) ^ (a & c) ^ (b & c);
 			uint32_t temp2 = S0 + maj;
