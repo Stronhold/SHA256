@@ -20,15 +20,13 @@ void sha256(char* data, uint8_t length, uint32_t* digest)
 				h4 = sha256_init_h[4], h5 = sha256_init_h[5],
 				h6 = sha256_init_h[6], h7 = sha256_init_h[7];
 
+	// ------ Dividimos el mensaje en bloques de 512 bits (64 bytes) ------ //
 	for (i = 0; i < n_length / 64; i++)
 	{
 		uint32_t w[64];
-	//	for (int m = 0; m < 16; m++)
-	//	{
-	//		w[m] = (message[m*4+i*64] << 24) + (message[m*4+i*64+1] << 16) + (message[m*4+i*64+2] << 8) + (message[m*4+i*64+2]);
-	//	}
-		memcpy(w, &message[i*64], 64);
+		memcpy(w, &message[i*64], 64); // Copiamos el bloque
 
+		// ------ Extendemos el bloque con el algoritmo ------ //
 		for (int n = 16; n < 64; n++)
 		{
 			uint32_t s0, s1;
@@ -40,6 +38,7 @@ void sha256(char* data, uint8_t length, uint32_t* digest)
 
 		uint32_t a = h0, b = h1, c = h2, d = h3, e = h4, f = h5, g = h6, h = h7;
 
+		// ------ Comprimimos el hash ------ //
 		for (int f = 0; f < 64; f++)
 		{
 			uint32_t S1 = rir(e, 6) ^ rir(e, 11) ^ rir(e, 25);
@@ -59,6 +58,7 @@ void sha256(char* data, uint8_t length, uint32_t* digest)
 			a = temp1 + temp2;
 		}
 
+		// ------ Añadimos lo comprimido al hash ------ //
 		h0 = h0 + a;
 		h1 = h1 + b;
 		h2 = h2 + c;
@@ -87,9 +87,8 @@ uint32_t rir(uint32_t a, int n)
 int main(void)
 {
 	// -- TEST 1 -- //
-	printf("\nCadena: 12345\n");
-	printf("Esperado:\t5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5\n");
-	printf("Hash:\t\t");
+	printf("\nCadena:\t12345\n");
+	printf("Hash:\t");
 
 	char* string = "12345";
 	uint32_t hash[8];
@@ -106,9 +105,8 @@ int main(void)
 
 
 	// -- TEST 2 -- //
-	printf("\nCadena: abcde\n");
-	printf("Esperado:\t36bbe50ed96841d10443bcb670d6554f0a34b761be67ec9c4a8ad2c0c44ca42c\n");
-	printf("Hash:\t\t");
+	printf("\nCadena:\tabcde\n");
+	printf("Hash:\t");
 
 	string = "abcde";
 	sha256(string, 5, hash);
